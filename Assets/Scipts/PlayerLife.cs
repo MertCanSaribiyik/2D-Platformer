@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -7,12 +5,15 @@ public class PlayerLife : MonoBehaviour
 {
     private Rigidbody2D rb;
     private Animator animator;
+    private int deathCount;
 
     [SerializeField] private AudioClip deathSoundEffect;
 
     private void Awake() {
         rb = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>(); 
+        animator = GetComponent<Animator>();
+
+        deathCount = PlayerPrefs.GetInt("deathCount", 0);
     }
 
     private void OnCollisionEnter2D(Collision2D collision) {
@@ -25,8 +26,12 @@ public class PlayerLife : MonoBehaviour
         animator.SetTrigger("death");
         rb.bodyType = RigidbodyType2D.Static;
         AudioManager.Instance.PlaySoundEffect(deathSoundEffect);
+
+        deathCount++;
+        PlayerPrefs.SetInt("deathCount", deathCount);
     }
 
+    //Added as event to death animation : 
     private void RestartLevel() {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
